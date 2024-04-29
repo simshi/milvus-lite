@@ -1,18 +1,26 @@
-FROM milvusdb/milvus-env:amd64-centos7-20230606-c9d9940
+FROM ubuntu:20.04
 
-# Ignore tool missing warnings, and wo also not need clang-tools
-RUN rm -fr /etc/profile.d/llvm-toolset*.sh
+ARG DEBIAN_FRONTEND=noninteractive
+RUN sed -i.bak -r 's@//.*ubuntu.com@//mirrors.aliyun.com@g' /etc/apt/sources.list && \
+    apt update && \
+    apt install -y xz-utils tar curl jq vim sudo gdb wget git ccache pkg-config lsb-release \
+        python3 python3-pip python3.8 python3.8-dev \
+        libssl1.1 libmsgpack-dev numactl build-essential binutils lintian \
+        patchelf
 
-# python38 for dev
-RUN yum -y install rh-python38
-RUN echo 'source scl_source enable rh-python38' > /etc/profile.d/rh-python38.sh
+SHELL ["/bin/bash", "-c"]
+RUN echo $'[global]\n\
+index-url = https://pypi.tuna.tsinghua.edu.cn/simple\n\
+[install]\n\
+trusted-host = https://pypi.tuna.tsinghua.edu.cn' > /etc/pip.conf
 
-# git new for devel
-RUN yum -y install rh-git227-git-all
-RUN echo 'source scl_source enable rh-git227' > /etc/profile.d/rh-git227.sh
+RUN python3.8 -m pip install -U pip wheel scikit-build setuptools && \
+    python3.8 -m pip install cmake
+
+# go
+RUN curl -fL https://studygolang.com/dl/golang/go1.22.0.linux-amd64.tar.gz | tar xz -C /usr/local
 
 # Add local user in container for dev
-RUN yum -y install sudo
 ADD setup/env /tmp/env
 RUN . /tmp/env && \
     if getent group $DEV_GROUP 2>/dev/null 1>/dev/null ; then \
@@ -32,3 +40,10 @@ RUN . /tmp/env && \
     if [ $DEV_UID -ne 0 ] ; then \
         echo "${DEV_USER} ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/user ; \
     fi
+
+ENV MACA_PATH=/opt/maca \
+    CUDA_PATH=/opt/maca/tools/cu-bridge \
+    CUCC_PATH=/opt/maca/tools/cu-bridge \
+    LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/opt/maca/lib \
+    PATH=/usr/local/go/bin:${PATH} \
+    GOPROXY=goproxy.cn

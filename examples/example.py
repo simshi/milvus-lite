@@ -45,7 +45,7 @@ _INDEX_FILE_SIZE = 32  # max file size of stored index
 
 # Index parameters
 _METRIC_TYPE = 'L2'
-_INDEX_TYPE = 'IVF_FLAT'
+_INDEX_TYPE = 'GPU_IVF_FLAT'
 _NLIST = 1024
 _NPROBE = 16
 _TOPK = 3

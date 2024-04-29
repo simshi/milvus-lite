@@ -1,0 +1,39 @@
+diff --git a/internal/core/build.sh b/internal/core/build.sh
+index 051a42e5f..ed26831d4 100755
+--- a/internal/core/build.sh
++++ b/internal/core/build.sh
+@@ -149,7 +149,6 @@ CMAKE_CMD="cmake \
+ -DCMAKE_INSTALL_PREFIX=${INSTALL_PREFIX}
+ -DCMAKE_BUILD_TYPE=${BUILD_TYPE} \
+ -DOpenBLAS_SOURCE=AUTO \
+--DCMAKE_CUDA_COMPILER=${CUDA_COMPILER} \
+ -DBUILD_COVERAGE=${BUILD_COVERAGE} \
+ -DENABLE_CPU_PROFILING=${PROFILING} \
+ -DMILVUS_GPU_VERSION=${GPU_VERSION} \
+diff --git a/internal/core/thirdparty/knowhere/CMakeLists.txt b/internal/core/thirdparty/knowhere/CMakeLists.txt
+index e6465b181..116ace368 100644
+--- a/internal/core/thirdparty/knowhere/CMakeLists.txt
++++ b/internal/core/thirdparty/knowhere/CMakeLists.txt
+@@ -12,8 +12,8 @@
+ #-------------------------------------------------------------------------------
+ 
+ # Update KNOWHERE_VERSION for the first occurrence
+-set( KNOWHERE_VERSION v2.2.5 )
+-set( GIT_REPOSITORY  "https://github.com/zilliztech/knowhere.git")
++set( KNOWHERE_VERSION bd2d882 )
++set( GIT_REPOSITORY  "https://github.com/simshi/knowhere.git")
+ if ( INDEX_ENGINE STREQUAL "cardinal" )
+     set( KNOWHERE_VERSION 2.2.6 )
+     set( GIT_REPOSITORY  "https://github.com/zilliztech/knowhere-cloud.git")
+diff --git a/scripts/core_build.sh b/scripts/core_build.sh
+index bd24d116e..0b1e78250 100755
+--- a/scripts/core_build.sh
++++ b/scripts/core_build.sh
+@@ -236,7 +236,6 @@ ${CMAKE_EXTRA_ARGS} \
+ -DBUILD_UNIT_TEST=${BUILD_UNITTEST} \
+ -DCMAKE_INSTALL_PREFIX=${INSTALL_PREFIX}
+ -DCMAKE_BUILD_TYPE=${BUILD_TYPE} \
+--DCMAKE_CUDA_COMPILER=${CUDA_COMPILER} \
+ -DCMAKE_LIBRARY_ARCHITECTURE=${arch} \
+ -DBUILD_COVERAGE=${BUILD_COVERAGE} \
+ -DMILVUS_GPU_VERSION=${GPU_VERSION} \
