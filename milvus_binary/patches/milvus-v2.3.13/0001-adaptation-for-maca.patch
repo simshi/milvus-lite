@@ -16,7 +16,7 @@ index e6465b181..116ace368 100644
 +++ b/internal/core/thirdparty/knowhere/CMakeLists.txt
 @@ -12,8 +12,8 @@
  #-------------------------------------------------------------------------------
- 
+
  # Update KNOWHERE_VERSION for the first occurrence
 -set( KNOWHERE_VERSION v2.2.5 )
 -set( GIT_REPOSITORY  "https://github.com/zilliztech/knowhere.git")
@@ -25,6 +25,24 @@ index e6465b181..116ace368 100644
  if ( INDEX_ENGINE STREQUAL "cardinal" )
      set( KNOWHERE_VERSION 2.2.6 )
      set( GIT_REPOSITORY  "https://github.com/zilliztech/knowhere-cloud.git")
+diff --git a/internal/querynodev2/segments/cgo_util.go b/internal/querynodev2/segments/cgo_util.go
+index f56c3fb2c..2e985c6c9 100644
+--- a/internal/querynodev2/segments/cgo_util.go
++++ b/internal/querynodev2/segments/cgo_util.go
+@@ -47,11 +47,11 @@ func HandleCStatus(ctx context.Context, status *C.CStatus, extraInfo string, fie
+ 	errorMsg := C.GoString(status.error_msg)
+ 	defer C.free(unsafe.Pointer(status.error_msg))
+
+-	log.Ctx(ctx).With(fields...).
++	log := log.Ctx(ctx).With(fields...).
+ 		WithOptions(zap.AddCallerSkip(1)) // Add caller stack to show HandleCStatus caller
+
+ 	err := merr.SegcoreError(int32(errorCode), errorMsg)
+-	log.Warn("CStatus returns err", zap.Error(err))
++	log.Warn("CStatus returns err", zap.Error(err), zap.String("extra", extraInfo))
+ 	return err
+ }
+
 diff --git a/scripts/core_build.sh b/scripts/core_build.sh
 index bd24d116e..0b1e78250 100755
 --- a/scripts/core_build.sh

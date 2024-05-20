@@ -21,7 +21,7 @@ import urllib.request
 import json
 import hashlib
 
-__version__ = '2.3.13'
+__version__ = '2.3.13.240521+mc2.20.2.2'
 
 LOGGERS = {}
 
@@ -394,7 +394,7 @@ class MilvusServer:
         if self.running:
             raise TimeoutError(f'Milvus not startd in {timeout/1000} seconds')
         else:
-            raise RuntimeError('Milvus server already stopped')
+            raise RuntimeError(f"Milvus server already stopped with {self.server_proc.poll()}")
 
     def start(self):
         self.config.resolve()
@@ -470,7 +470,7 @@ class MilvusServer:
 
     @property
     def running(self) -> bool:
-        return self.server_proc is not None
+        return self.server_proc is not None and self.server_proc.poll() is None
 
     @property
     def server_address(self) -> str:
