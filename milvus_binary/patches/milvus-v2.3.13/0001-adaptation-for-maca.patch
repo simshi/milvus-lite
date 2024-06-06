@@ -20,7 +20,7 @@ index e6465b181..116ace368 100644
  # Update KNOWHERE_VERSION for the first occurrence
 -set( KNOWHERE_VERSION v2.2.5 )
 -set( GIT_REPOSITORY  "https://github.com/zilliztech/knowhere.git")
-+set( KNOWHERE_VERSION bd2d882 )
++set( KNOWHERE_VERSION 36372b1 )
 +set( GIT_REPOSITORY  "https://github.com/simshi/knowhere.git")
  if ( INDEX_ENGINE STREQUAL "cardinal" )
      set( KNOWHERE_VERSION 2.2.6 )
@@ -43,6 +43,41 @@ index f56c3fb2c..2e985c6c9 100644
  	return err
  }
 
+diff --git a/pkg/util/indexparamcheck/conf_adapter_mgr.go b/pkg/util/indexparamcheck/conf_adapter_mgr.go
+index 5099da0ca..1a4a114df 100644
+--- a/pkg/util/indexparamcheck/conf_adapter_mgr.go
++++ b/pkg/util/indexparamcheck/conf_adapter_mgr.go
+@@ -43,6 +43,8 @@ func (mgr *indexCheckerMgrImpl) GetChecker(indexType string) (IndexChecker, erro
+ }
+
+ func (mgr *indexCheckerMgrImpl) registerIndexChecker() {
++	mgr.checkers[IndexGpuFlat] = newFlatChecker()
++	mgr.checkers[IndexGpuIvfSQ8] = newIVFBaseChecker()
+ 	mgr.checkers[IndexRaftIvfFlat] = newIVFBaseChecker()
+ 	mgr.checkers[IndexRaftIvfPQ] = newRaftIVFPQChecker()
+ 	mgr.checkers[IndexFaissIDMap] = newFlatChecker()
+diff --git a/pkg/util/indexparamcheck/index_type.go b/pkg/util/indexparamcheck/index_type.go
+index ebef1bc7a..ba42b334f 100644
+--- a/pkg/util/indexparamcheck/index_type.go
++++ b/pkg/util/indexparamcheck/index_type.go
+@@ -17,6 +17,8 @@ type IndexType = string
+ // IndexType definitions
+ const (
+ 	IndexGpuBF           IndexType = "GPU_BRUTE_FORCE"
++	IndexGpuFlat         IndexType = "GPU_FLAT"
++	IndexGpuIvfSQ8       IndexType = "GPU_IVF_SQ8"
+ 	IndexRaftIvfFlat     IndexType = "GPU_IVF_FLAT"
+ 	IndexRaftIvfPQ       IndexType = "GPU_IVF_PQ"
+ 	IndexRaftCagra       IndexType = "GPU_CAGRA"
+@@ -33,6 +35,8 @@ const (
+
+ func IsGpuIndex(indexType IndexType) bool {
+ 	return indexType == IndexGpuBF ||
++		indexType == IndexGpuFlat ||
++		indexType == IndexGpuIvfSQ8 ||
+ 		indexType == IndexRaftIvfFlat ||
+ 		indexType == IndexRaftIvfPQ ||
+ 		indexType == IndexRaftCagra
 diff --git a/scripts/core_build.sh b/scripts/core_build.sh
 index bd24d116e..0b1e78250 100755
 --- a/scripts/core_build.sh

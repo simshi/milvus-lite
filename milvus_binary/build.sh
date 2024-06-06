@@ -92,7 +92,7 @@ fi
 # build for linux x86_64
 function build_linux_x86_64() {
     cd milvus
-    go mod tidy
+    # go mod tidy
     # conan need for milvus 2.3
     pip3 install --user "conan<2.0"
     export PATH=${HOME}/.local/bin:${PATH}
